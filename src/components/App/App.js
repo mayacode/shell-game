@@ -1,39 +1,98 @@
+import { useEffect, useState } from "react";
 
-import { useReducer } from "react";
+import Shell from '../Shell/Shell';
 
 function App() {
   const positionsInitialState = [
-    {left: 0, top: 0},
-    {left: 0, top: 0},
-    {left: 0, top: 0},
+    [
+      {left: 150, top: 75, key: 1},
+      {left: 250, top: 75, key: 2},
+      {left: 350, top: 75, key: 3},
+    ]
   ];
 
-  function reducer(state, action) {
-    switch(action.type) {
-      default:
-        return state;
-    }
+  const [positions, setPositions] = useState(positionsInitialState);
+  const [openedShell, setOpenedShell] = useState(0);
+
+  function check(event) {
+    const shellNr = parseInt(event.currentTarget.dataset.nr);
+
+    setOpenedShell(shellNr)
   }
 
-  const [positions, dispatch] = useReducer(reducer, positionsInitialState);
+  function reset() {
+    setOpenedShell(0);
+    setPositions(positionsInitialState)
+  }
+
+  const options = [
+    [
+      {left: 150, top: 75, key: 1},
+      {left: 250, top: 75, key: 2},
+      {left: 350, top: 75, key: 3},
+    ],
+    [
+      {left: 150, top: 75, key: 1},
+      {left: 350, top: 75, key: 2},
+      {left: 250, top: 75, key: 3},
+    ],
+    [
+      {left: 250, top: 75, key: 1},
+      {left: 150, top: 75, key: 2},
+      {left: 350, top: 75, key: 3},
+    ],
+    [
+      {left: 250, top: 75, key: 1},
+      {left: 350, top: 75, key: 2},
+      {left: 150, top: 75, key: 3},
+    ],
+    [
+      {left: 350, top: 75, key: 1},
+      {left: 150, top: 75, key: 2},
+      {left: 250, top: 75, key: 3},
+    ],
+    [
+      {left: 350, top: 75, key: 1},
+      {left: 250, top: 75, key: 2},
+      {left: 150, top: 75, key: 3},
+    ],
+  ]
+
+  const options2 = [
+    { modifyLeft: (v) => v + 4, modifyTop: (v) => v + 4 },
+    { modifyLeft: (v) => v - 4, modifyTop: (v) => v - 4 },
+    { modifyLeft: (v) => v + 4, modifyTop: (v) => v - 4 },
+    { modifyLeft: (v) => v - 4, modifyTop: (v) => v + 4 },
+  ]
+
+  function getChange() {
+    const number = Math.floor(Math.random() * Math.floor(6));
+    return options[number]
+  }
+
+  useEffect(
+    () => {
+      if(positions.length < 11) {
+        setTimeout(() => {
+          const newPositions = [ ...positions];
+          newPositions.push(getChange());
+
+          setPositions(newPositions);
+        }, 500)
+      }
+    },
+    [positionsInitialState]
+  )
+
   return (
-    <div style={{ display: 'flex',  }}>
-      <div style={{ transform: 'rotate(45)' }}>
-        <svg viewBox="0 0 55 55" style={{ width: '55px', height: '55px', padding: '5px' }}>
-          <path d="M0,50 C0,0 50,0 50,50"></path>
-        </svg>
+    <>
+      <button onClick={reset}>run</button>
+      <div style={{ position: 'relative', width: '500px', height: '200px' }}>
+        {positions[positions.length - 1].map((pos) => (
+          <Shell key={pos.key} pos={pos} check={check} openedShell={openedShell} />
+        ))}
       </div>
-      <div>
-        <svg viewBox="0 0 55 55" style={{ width: '55px', height: '55px', padding: '5px' }}>
-          <path d="M0,50 C0,0 50,0 50,50"></path>
-        </svg>
-      </div>
-      <div>
-        <svg viewBox="0 0 55 55" style={{ width: '55px', height: '55px', padding: '5px' }}>
-          <path d="M0,50 C0,0 50,0 50,50"></path>
-        </svg>
-      </div>
-    </div>
+    </>
   );
 }
 
