@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import App from '../App';
+import {SHELLS_NUMBER} from "../../../constants/constants";
 
 describe('<App /> ', () => {
   it('renders game ready for start', () => {
@@ -9,6 +10,6 @@ describe('<App /> ', () => {
       name: /start/i
     })).toBeTruthy();
 
-    expect(container.querySelectorAll('.shell')).toHaveLength(3)
+    expect(container.querySelectorAll('.shell')).toHaveLength(SHELLS_NUMBER)
   })
 });

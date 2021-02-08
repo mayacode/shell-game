@@ -3,7 +3,7 @@ import {
   DEFAULT_BALL_POSITION,
   DEFAULT_OPENED_SHELL,
   MOVES_PER_GAME,
-  SHELL_POSITION_CHANGE_TIMEOUT
+  SHELL_POSITION_CHANGE_TIMEOUT, SHELLS_NUMBER
 } from '../../constants/constants';
 import { options, getRandomNumber, makeChange } from './helpers';
 
@@ -39,7 +39,7 @@ export function useShellGame() {
     // position default
     setPositions([options[0]]);
     // random ball position
-    setBallPosition(getRandomNumber(3));
+    setBallPosition(getRandomNumber(SHELLS_NUMBER));
     // game started
     setGameStarted(true);
   }
