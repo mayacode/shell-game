@@ -23,9 +23,11 @@ export function useShellGame() {
    * @return {number} shellNr
    */
   function check(event) {
-    const shellNr = parseInt(event.currentTarget.dataset.nr);
+    if (!gameStarted) {
+      const shellNr = parseInt(event.currentTarget.dataset.nr);
 
-    setOpenedShell(shellNr)
+      setOpenedShell(shellNr)
+    }
   }
 
   /**
