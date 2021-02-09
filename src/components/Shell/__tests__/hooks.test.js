@@ -1,6 +1,7 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 
 import { useShell } from '../hooks';
+import {DEFAULT_OPENED_SHELL} from "../../../constants/constants";
 
 describe('Shell hooks', () => {
   describe('useShell hook', () => {
@@ -53,6 +54,33 @@ describe('Shell hooks', () => {
 
       //after defined time (1 second) it disappears
       expect(result.current.ballVisible).toEqual(false);
-    })
+    });
+
+    it('checkShell', () => {
+      const defaultIndex = 1;
+      const setWinner = jest.fn();
+      const openShell = jest.fn();
+      const { result } = renderHook(() => useShell({
+        ballPosition: defaultIndex,
+        gameStarted: false,
+        index: defaultIndex,
+        openedShell: DEFAULT_OPENED_SHELL,
+        setWinner,
+        openShell,
+      }));
+
+      expect(setWinner).toHaveBeenCalledTimes(0);
+      expect(openShell).toHaveBeenCalledTimes(0);
+      expect(typeof result.current.checkShell).toEqual('function');
+
+      act(() => {
+        result.current.checkShell({ currentTarget: { dataset: { nr: `${defaultIndex}`}}});
+      });
+
+      expect(setWinner).toHaveBeenCalledTimes(1);
+      expect(setWinner).toHaveBeenCalledWith(1);
+      expect(openShell).toHaveBeenCalledTimes(1);
+      expect(openShell).toHaveBeenCalledWith(1);
+    });
   });
 });

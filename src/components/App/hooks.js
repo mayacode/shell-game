@@ -9,25 +9,22 @@ import { options, getRandomNumber, makeChange } from './helpers';
 
 /**
  * logic for shell game
- * @return {{ballPosition: number, reset: reset, positions: {top: number, left: number}[][], gameStarted: boolean, check: (function(Event): number), openedShell: number}}
+ * @return {{victories: *[], ballPosition: number, reset: reset, setWinner: setWinner, positions: {top: number, left: number}[][], openShell: openShell, gameStarted: boolean, openedShell: number}}
  */
 export function useShellGame() {
   const [positions, setPositions] = useState([options[0]]);
   const [openedShell, setOpenedShell] = useState(DEFAULT_OPENED_SHELL);
   const [ballPosition, setBallPosition] = useState(DEFAULT_BALL_POSITION);
   const [gameStarted, setGameStarted] = useState(false);
+  const [victories, setVictories] = useState([]);
 
   /**
    * function for opening the clicked shell
-   * @param {Event} event
-   * @return {number} shellNr
+   * @param {number} shellNr
+   * @return void
    */
-  function check(event) {
-    if (!gameStarted) {
-      const shellNr = parseInt(event.currentTarget.dataset.nr);
-
-      setOpenedShell(shellNr)
-    }
+  function openShell(shellNr) {
+    setOpenedShell(shellNr)
   }
 
   /**
@@ -42,6 +39,12 @@ export function useShellGame() {
     setBallPosition(getRandomNumber(SHELLS_NUMBER));
     // game started
     setGameStarted(true);
+
+    // set new victories record with default value null
+    // this array could be used for counting victories for the user
+    const newVictories = [...victories];
+    newVictories.push(null);
+    setVictories(newVictories);
   }
 
   // every time when positions or gameStarted change
@@ -66,12 +69,34 @@ export function useShellGame() {
     [positions, gameStarted],
   );
 
+  /**
+   * function for setting a winner
+   * @param {number} shellNr
+   * @return void
+   */
+  function setWinner(shellNr) {
+    // take last index in victories array
+    const lastIndex = victories.length - 1;
+    // only if winner was not set for this round
+    if (victories[lastIndex] === null) {
+      // make copy of victories array
+      const newVictories = [...victories];
+
+      // and add the result
+      newVictories[lastIndex] = shellNr === ballPosition;
+
+      setVictories(newVictories);
+    }
+  }
+
   return {
     reset,
     positions,
-    check,
+    openShell,
     openedShell,
     ballPosition,
     gameStarted,
+    setWinner,
+    victories,
   }
 }

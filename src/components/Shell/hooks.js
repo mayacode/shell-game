@@ -7,6 +7,8 @@ import {DEFAULT_BALL_POSITION, DEFAULT_OPENED_SHELL} from "../../constants/const
  * @param {boolean} gameStarted
  * @param {number} index number of the shell
  * @param {number} openedShell number of shell which should be open
+ * @param {function} setVictories
+ * @param {function} openShell
  * @return {{rotatedShell: boolean, ballVisible: boolean}}
  */
 export function useShell({
@@ -14,6 +16,8 @@ export function useShell({
   gameStarted,
   index,
   openedShell = DEFAULT_OPENED_SHELL,
+  setWinner,
+  openShell,
 } = {}) {
   const [ballVisible, setBallVisible] = useState(openedShell === index && ballPosition === index);
 
@@ -48,9 +52,27 @@ export function useShell({
     [openedShell],
   );
 
+  /**
+   * function which checks clicked shell
+   * @param event
+   */
+  function checkShell(event) {
+    // if movements finished
+    if (!gameStarted) {
+      // get clicked shell number
+      const shellNr = parseInt(event.currentTarget.dataset.nr);
+
+      // open it
+      openShell(shellNr);
+      // set win/lose status
+      setWinner(shellNr)
+    }
+  }
+
   return {
     ballVisible,
     // show opened shell by rotating the image
     rotatedShell: openedShell === index || (!!gameStarted && ballVisible),
+    checkShell,
   }
 }

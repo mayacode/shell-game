@@ -5,14 +5,14 @@ import * as constants from '../../../constants/constants';
 
 describe('Shell Game hooks', () => {
   describe('useShellGame hook', () => {
-    it('should return openedShell and check function for manipulation', () => {
+    it('should return openedShell and openShell function for manipulation', () => {
       const { result } = renderHook(() => useShellGame());
 
       expect(result.current.openedShell).toBeLessThan(0);
-      expect(typeof result.current.check).toEqual('function');
+      expect(typeof result.current.openShell).toEqual('function');
 
       act(() => {
-        result.current.check({ currentTarget: { dataset: { nr: '1' }}});
+        result.current.openShell(1);
       });
 
       expect(result.current.openedShell).toEqual(1);
@@ -43,6 +43,37 @@ describe('Shell Game hooks', () => {
       await waitForValueToChange(() => result.current.positions);
 
       expect(result.current.positions).toHaveLength(2);
+    });
+
+    it('should return victories and setWinner function for manipulation', () => {
+      const { result } = renderHook(() => useShellGame());
+
+      expect(result.current.victories).toEqual([]);
+      expect(typeof result.current.setWinner).toEqual('function');
+
+      act(() => {
+        result.current.reset()
+      })
+
+      expect(result.current.victories).toEqual([null]);
+
+      act(() => {
+        result.current.setWinner(10)
+      });
+
+      expect(result.current.victories).toEqual([false]);
+
+      act(() => {
+        result.current.reset()
+      })
+
+      expect(result.current.victories).toEqual([false, null]);
+
+      act(() => {
+        result.current.setWinner(result.current.ballPosition)
+      });
+
+      expect(result.current.victories).toEqual([false, true]);
     });
   })
 });
